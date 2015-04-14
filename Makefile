@@ -5,7 +5,7 @@ ifneq ($(OS),Windows_NT)
 	CFLAGS += -fPIC
 endif
 
-HOEDOWN_SRC=\
+RFCDOWN_SRC=\
 	src/autolink.o \
 	src/buffer.o \
 	src/document.o \
@@ -18,47 +18,47 @@ HOEDOWN_SRC=\
 
 .PHONY:		all test test-pl clean
 
-all:		libhoedown.so hoedown smartypants
+all:		librfcdown.so rfcdown smartypants
 
 # Libraries
 
-libhoedown.so: libhoedown.so.3
+librfcdown.so: librfcdown.so.3
 	ln -f -s $^ $@
 
-libhoedown.so.3: $(HOEDOWN_SRC)
+librfcdown.so.3: $(RFCDOWN_SRC)
 	$(CC) -shared $^ $(LDFLAGS) -o $@
 
-libhoedown.a: $(HOEDOWN_SRC)
-	$(AR) rcs libhoedown.a $^
+librfcdown.a: $(RFCDOWN_SRC)
+	$(AR) rcs librfcdown.a $^
 
 # Executables
 
-hoedown: bin/hoedown.o $(HOEDOWN_SRC)
+rfcdown: bin/rfcdown.o $(RFCDOWN_SRC)
 	$(CC) $^ $(LDFLAGS) -o $@
 
-smartypants: bin/smartypants.o $(HOEDOWN_SRC)
+smartypants: bin/smartypants.o $(RFCDOWN_SRC)
 	$(CC) $^ $(LDFLAGS) -o $@
 
 # Perfect hashing
 
 src/html_blocks.c: html_block_names.gperf
-	gperf -L ANSI-C -N hoedown_find_block_tag -c -C -E -S 1 --ignore-case -m100 $^ > $@
+	gperf -L ANSI-C -N rfcdown_find_block_tag -c -C -E -S 1 --ignore-case -m100 $^ > $@
 
 # Testing
 
-test: hoedown
+test: rfcdown
 	python test/runner.py
 
-test-pl: hoedown
+test-pl: rfcdown
 	perl test/MarkdownTest_1.0.3/MarkdownTest.pl \
-		--script=./hoedown --testdir=test/MarkdownTest_1.0.3/Tests --tidy
+		--script=./rfcdown --testdir=test/MarkdownTest_1.0.3/Tests --tidy
 
 # Housekeeping
 
 clean:
 	$(RM) src/*.o bin/*.o
-	$(RM) libhoedown.so libhoedown.so.1 libhoedown.a
-	$(RM) hoedown smartypants hoedown.exe smartypants.exe
+	$(RM) librfcdown.so librfcdown.so.1 librfcdown.a
+	$(RM) rfcdown smartypants rfcdown.exe smartypants.exe
 
 # Installing
 
@@ -67,12 +67,12 @@ install:
 	install -m755 -d $(DESTDIR)$(PREFIX)/bin
 	install -m755 -d $(DESTDIR)$(PREFIX)/include
 
-	install -m644 libhoedown.* $(DESTDIR)$(PREFIX)/lib
-	install -m755 hoedown $(DESTDIR)$(PREFIX)/bin
+	install -m644 librfcdown.* $(DESTDIR)$(PREFIX)/lib
+	install -m755 rfcdown $(DESTDIR)$(PREFIX)/bin
 	install -m755 smartypants $(DESTDIR)$(PREFIX)/bin
 
-	install -m755 -d $(DESTDIR)$(PREFIX)/include/hoedown
-	install -m644 src/*.h $(DESTDIR)$(PREFIX)/include/hoedown
+	install -m755 -d $(DESTDIR)$(PREFIX)/include/rfcdown
+	install -m644 src/*.h $(DESTDIR)$(PREFIX)/include/rfcdown
 
 # Generic object compilations
 

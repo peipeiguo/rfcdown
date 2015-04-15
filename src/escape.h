@@ -1,7 +1,7 @@
 /* escape.h - escape utilities */
 
-#ifndef HOEDOWN_ESCAPE_H
-#define HOEDOWN_ESCAPE_H
+#ifndef RFCDOWN_ESCAPE_H
+#define RFCDOWN_ESCAPE_H
 
 #include "buffer.h"
 
@@ -14,15 +14,15 @@ extern "C" {
  * FUNCTIONS *
  *************/
 
-/* hoedown_escape_href: escape (part of) a URL inside HTML */
-void hoedown_escape_href(hoedown_buffer *ob, const uint8_t *data, size_t size);
+/* rfcdown_escape_href: escape (part of) a URL inside HTML */
+void rfcdown_escape_href(rfcdown_buffer *ob, const uint8_t *data, size_t size);
 
-/* hoedown_escape_html: escape HTML */
-void hoedown_escape_html(hoedown_buffer *ob, const uint8_t *data, size_t size, int secure);
+/* rfcdown_escape_html: escape HTML */
+void rfcdown_escape_html(rfcdown_buffer *ob, const uint8_t *data, size_t size, int secure);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /** HOEDOWN_ESCAPE_H **/
+#endif /** RFCDOWN_ESCAPE_H **/

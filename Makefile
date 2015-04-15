@@ -18,34 +18,27 @@ RFCDOWN_SRC=\
 
 .PHONY:		all test test-pl clean
 
-all:		librfcdown.so rfcdown smartypants
+all:		librfcdown.so rfcdown
 
 # Libraries
-
-librfcdown.so: librfcdown.so.3
+librfcdown.so: librfcdown.so.1
 	ln -f -s $^ $@
 
-librfcdown.so.3: $(RFCDOWN_SRC)
+librfcdown.so.1: $(RFCDOWN_SRC)
 	$(CC) -shared $^ $(LDFLAGS) -o $@
 
 librfcdown.a: $(RFCDOWN_SRC)
 	$(AR) rcs librfcdown.a $^
 
 # Executables
-
 rfcdown: bin/rfcdown.o $(RFCDOWN_SRC)
 	$(CC) $^ $(LDFLAGS) -o $@
 
-smartypants: bin/smartypants.o $(RFCDOWN_SRC)
-	$(CC) $^ $(LDFLAGS) -o $@
-
 # Perfect hashing
-
 src/html_blocks.c: html_block_names.gperf
 	gperf -L ANSI-C -N rfcdown_find_block_tag -c -C -E -S 1 --ignore-case -m100 $^ > $@
 
 # Testing
-
 test: rfcdown
 	python test/runner.py
 
@@ -54,14 +47,12 @@ test-pl: rfcdown
 		--script=./rfcdown --testdir=test/MarkdownTest_1.0.3/Tests --tidy
 
 # Housekeeping
-
 clean:
 	$(RM) src/*.o bin/*.o
 	$(RM) librfcdown.so librfcdown.so.1 librfcdown.a
-	$(RM) rfcdown smartypants rfcdown.exe smartypants.exe
+	$(RM) rfcdown rfcdown.exe
 
 # Installing
-
 install:
 	install -m755 -d $(DESTDIR)$(PREFIX)/lib
 	install -m755 -d $(DESTDIR)$(PREFIX)/bin
@@ -69,13 +60,11 @@ install:
 
 	install -m644 librfcdown.* $(DESTDIR)$(PREFIX)/lib
 	install -m755 rfcdown $(DESTDIR)$(PREFIX)/bin
-	install -m755 smartypants $(DESTDIR)$(PREFIX)/bin
 
 	install -m755 -d $(DESTDIR)$(PREFIX)/include/rfcdown
 	install -m644 src/*.h $(DESTDIR)$(PREFIX)/include/rfcdown
 
 # Generic object compilations
-
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 

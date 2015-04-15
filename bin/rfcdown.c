@@ -31,37 +31,37 @@ struct html_flag_info {
 };
 
 static struct extension_category_info categories_info[] = {
-	{HOEDOWN_EXT_BLOCK, "block", "Block extensions"},
-	{HOEDOWN_EXT_SPAN, "span", "Span extensions"},
-	{HOEDOWN_EXT_FLAGS, "flags", "Other flags"},
-	{HOEDOWN_EXT_NEGATIVE, "negative", "Negative flags"},
+	{RFCDOWN_EXT_BLOCK, "block", "Block extensions"},
+	{RFCDOWN_EXT_SPAN, "span", "Span extensions"},
+	{RFCDOWN_EXT_FLAGS, "flags", "Other flags"},
+	{RFCDOWN_EXT_NEGATIVE, "negative", "Negative flags"},
 };
 
 static struct extension_info extensions_info[] = {
-	{HOEDOWN_EXT_TABLES, "tables", "Parse PHP-Markdown style tables."},
-	{HOEDOWN_EXT_FENCED_CODE, "fenced-code", "Parse fenced code blocks."},
-	{HOEDOWN_EXT_FOOTNOTES, "footnotes", "Parse footnotes."},
+	{RFCDOWN_EXT_TABLES, "tables", "Parse PHP-Markdown style tables."},
+	{RFCDOWN_EXT_FENCED_CODE, "fenced-code", "Parse fenced code blocks."},
+	{RFCDOWN_EXT_FOOTNOTES, "footnotes", "Parse footnotes."},
 
-	{HOEDOWN_EXT_AUTOLINK, "autolink", "Automatically turn safe URLs into links."},
-	{HOEDOWN_EXT_STRIKETHROUGH, "strikethrough", "Parse ~~stikethrough~~ spans."},
-	{HOEDOWN_EXT_UNDERLINE, "underline", "Parse _underline_ instead of emphasis."},
-	{HOEDOWN_EXT_HIGHLIGHT, "highlight", "Parse ==highlight== spans."},
-	{HOEDOWN_EXT_QUOTE, "quote", "Render \"quotes\" as <q>quotes</q>."},
-	{HOEDOWN_EXT_SUPERSCRIPT, "superscript", "Parse super^script."},
-	{HOEDOWN_EXT_MATH, "math", "Parse TeX $$math$$ syntax, Kramdown style."},
+	{RFCDOWN_EXT_AUTOLINK, "autolink", "Automatically turn safe URLs into links."},
+	{RFCDOWN_EXT_STRIKETHROUGH, "strikethrough", "Parse ~~stikethrough~~ spans."},
+	{RFCDOWN_EXT_UNDERLINE, "underline", "Parse _underline_ instead of emphasis."},
+	{RFCDOWN_EXT_HIGHLIGHT, "highlight", "Parse ==highlight== spans."},
+	{RFCDOWN_EXT_QUOTE, "quote", "Render \"quotes\" as <q>quotes</q>."},
+	{RFCDOWN_EXT_SUPERSCRIPT, "superscript", "Parse super^script."},
+	{RFCDOWN_EXT_MATH, "math", "Parse TeX $$math$$ syntax, Kramdown style."},
 
-	{HOEDOWN_EXT_NO_INTRA_EMPHASIS, "disable-intra-emphasis", "Disable emphasis_between_words."},
-	{HOEDOWN_EXT_SPACE_HEADERS, "space-headers", "Require a space after '#' in headers."},
-	{HOEDOWN_EXT_MATH_EXPLICIT, "math-explicit", "Instead of guessing by context, parse $inline math$ and $$always block math$$ (requires --math)."},
+	{RFCDOWN_EXT_NO_INTRA_EMPHASIS, "disable-intra-emphasis", "Disable emphasis_between_words."},
+	{RFCDOWN_EXT_SPACE_HEADERS, "space-headers", "Require a space after '#' in headers."},
+	{RFCDOWN_EXT_MATH_EXPLICIT, "math-explicit", "Instead of guessing by context, parse $inline math$ and $$always block math$$ (requires --math)."},
 
-	{HOEDOWN_EXT_DISABLE_INDENTED_CODE, "disable-indented-code", "Don't parse indented code blocks."},
+	{RFCDOWN_EXT_DISABLE_INDENTED_CODE, "disable-indented-code", "Don't parse indented code blocks."},
 };
 
 static struct html_flag_info html_flags_info[] = {
-	{HOEDOWN_HTML_SKIP_HTML, "skip-html", "Strip all HTML tags."},
-	{HOEDOWN_HTML_ESCAPE, "escape", "Escape all HTML."},
-	{HOEDOWN_HTML_HARD_WRAP, "hard-wrap", "Render each linebreak as <br>."},
-	{HOEDOWN_HTML_USE_XHTML, "xhtml", "Render XHTML."},
+	{RFCDOWN_HTML_SKIP_HTML, "skip-html", "Strip all HTML tags."},
+	{RFCDOWN_HTML_ESCAPE, "escape", "Escape all HTML."},
+	{RFCDOWN_HTML_HARD_WRAP, "hard-wrap", "Render each linebreak as <br>."},
+	{RFCDOWN_HTML_USE_XHTML, "xhtml", "Render XHTML."},
 };
 
 static const char *category_prefix = "all-";
@@ -147,10 +147,10 @@ struct option_data {
 	/* renderer */
 	enum renderer_type renderer;
 	int toc_level;
-	hoedown_html_flags html_flags;
+	rfcdown_html_flags html_flags;
 
 	/* parsing */
-	hoedown_extensions extensions;
+	rfcdown_extensions extensions;
 	size_t max_nesting;
 };
 
@@ -364,10 +364,10 @@ main(int argc, char **argv)
 	struct option_data data;
 	clock_t t1, t2;
 	FILE *file = stdin;
-	hoedown_buffer *ib, *ob;
-	hoedown_renderer *renderer = NULL;
-	void (*renderer_free)(hoedown_renderer *) = NULL;
-	hoedown_document *document;
+	rfcdown_buffer *ib, *ob;
+	rfcdown_renderer *renderer = NULL;
+	void (*renderer_free)(rfcdown_renderer *) = NULL;
+	rfcdown_document *document;
 
 	/* Parse options */
 	data.basename = argv[0];
@@ -396,9 +396,9 @@ main(int argc, char **argv)
 	}
 
 	/* Read everything */
-	ib = hoedown_buffer_new(data.iunit);
+	ib = rfcdown_buffer_new(data.iunit);
 
-	if (hoedown_buffer_putf(ib, file)) {
+	if (rfcdown_buffer_putf(ib, file)) {
 		fprintf(stderr, "I/O errors found while reading input.\n");
 		return 5;
 	}
@@ -408,31 +408,31 @@ main(int argc, char **argv)
 	/* Create the renderer */
 	switch (data.renderer) {
 		case RENDERER_HTML:
-			renderer = hoedown_html_renderer_new(data.html_flags, data.toc_level);
-			renderer_free = hoedown_html_renderer_free;
+			renderer = rfcdown_html_renderer_new(data.html_flags, data.toc_level);
+			renderer_free = rfcdown_html_renderer_free;
 			break;
 		case RENDERER_HTML_TOC:
-			renderer = hoedown_html_toc_renderer_new(data.toc_level);
-			renderer_free = hoedown_html_renderer_free;
+			renderer = rfcdown_html_toc_renderer_new(data.toc_level);
+			renderer_free = rfcdown_html_renderer_free;
 			break;
 	};
 
 	/* Perform Markdown rendering */
-	ob = hoedown_buffer_new(data.ounit);
-	document = hoedown_document_new(renderer, data.extensions, data.max_nesting);
+	ob = rfcdown_buffer_new(data.ounit);
+	document = rfcdown_document_new(renderer, data.extensions, data.max_nesting);
 
 	t1 = clock();
-	hoedown_document_render(document, ob, ib->data, ib->size);
+	rfcdown_document_render(document, ob, ib->data, ib->size);
 	t2 = clock();
 
 	/* Cleanup */
-	hoedown_buffer_free(ib);
-	hoedown_document_free(document);
+	rfcdown_buffer_free(ib);
+	rfcdown_document_free(document);
 	renderer_free(renderer);
 
 	/* Write the result to stdout */
 	(void)fwrite(ob->data, 1, ob->size, stdout);
-	hoedown_buffer_free(ob);
+	rfcdown_buffer_free(ob);
 
 	if (ferror(stdout)) {
 		fprintf(stderr, "I/O errors found while writing output.\n");
@@ -443,7 +443,7 @@ main(int argc, char **argv)
 	if (data.show_time) {
 		double elapsed;
 
-		if (t1 == -1 || t2 == -1) {
+		if (t1 == (clock_t)-1 || t2 == (clock_t)-1) {
 			fprintf(stderr, "Failed to get the time.\n");
 			return 1;
 		}

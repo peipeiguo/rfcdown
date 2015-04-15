@@ -157,7 +157,7 @@ main(int argc, char **argv)
 	struct option_data data;
 	/*struct timespec start, end;*/
 	FILE *file = stdin;
-	hoedown_buffer *ib, *ob;
+	rfcdown_buffer *ib, *ob;
 
 	/* Parse options */
 	data.basename = argv[0];
@@ -181,24 +181,24 @@ main(int argc, char **argv)
 	}
 
 	/* Read everything */
-	ib = hoedown_buffer_new(data.iunit);
+	ib = rfcdown_buffer_new(data.iunit);
 
 	while (!feof(file)) {
 		if (ferror(file)) {
 			fprintf(stderr, "I/O errors found while reading input.\n");
 			return 5;
 		}
-		hoedown_buffer_grow(ib, ib->size + data.iunit);
+		rfcdown_buffer_grow(ib, ib->size + data.iunit);
 		ib->size += fread(ib->data + ib->size, 1, data.iunit, file);
 	}
 
 	if (file != stdin) fclose(file);
 
 	/* Perform SmartyPants processing */
-	ob = hoedown_buffer_new(data.ounit);
+	ob = rfcdown_buffer_new(data.ounit);
 
 	/*clock_gettime(CLOCK_MONOTONIC, &start);*/
-	hoedown_html_smartypants(ob, ib->data, ib->size);
+	rfcdown_html_smartypants(ob, ib->data, ib->size);
 	/*clock_gettime(CLOCK_MONOTONIC, &end);*/
 
 	/* Write the result to stdout */
@@ -216,8 +216,8 @@ main(int argc, char **argv)
 	}
 
 	/* Cleanup */
-	hoedown_buffer_free(ib);
-	hoedown_buffer_free(ob);
+	rfcdown_buffer_free(ib);
+	rfcdown_buffer_free(ob);
 
 	if (ferror(stdout)) {
 		fprintf(stderr, "I/O errors found while writing output.\n");

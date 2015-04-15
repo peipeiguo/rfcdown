@@ -43,7 +43,7 @@ print_option(char short_opt, const char *long_opt, const char *description)
 void
 print_version()
 {
-	printf("Built with Hoedown " HOEDOWN_VERSION ".\n");
+	printf("Built with Hoedown " RFCDOWN_VERSION ".\n");
 }
 
 int

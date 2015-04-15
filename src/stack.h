@@ -1,7 +1,7 @@
 /* stack.h - simple stacking */
 
-#ifndef HOEDOWN_STACK_H
-#define HOEDOWN_STACK_H
+#ifndef RFCDOWN_STACK_H
+#define RFCDOWN_STACK_H
 
 #include <stddef.h>
 
@@ -14,39 +14,39 @@ extern "C" {
  * TYPES *
  *********/
 
-struct hoedown_stack {
+struct rfcdown_stack {
 	void **item;
 	size_t size;
 	size_t asize;
 };
-typedef struct hoedown_stack hoedown_stack;
+typedef struct rfcdown_stack rfcdown_stack;
 
 
 /*************
  * FUNCTIONS *
  *************/
 
-/* hoedown_stack_init: initialize a stack */
-void hoedown_stack_init(hoedown_stack *st, size_t initial_size);
+/* rfcdown_stack_init: initialize a stack */
+void rfcdown_stack_init(rfcdown_stack *st, size_t initial_size);
 
-/* hoedown_stack_uninit: free internal data of the stack */
-void hoedown_stack_uninit(hoedown_stack *st);
+/* rfcdown_stack_uninit: free internal data of the stack */
+void rfcdown_stack_uninit(rfcdown_stack *st);
 
-/* hoedown_stack_grow: increase the allocated size to the given value */
-void hoedown_stack_grow(hoedown_stack *st, size_t neosz);
+/* rfcdown_stack_grow: increase the allocated size to the given value */
+void rfcdown_stack_grow(rfcdown_stack *st, size_t neosz);
 
-/* hoedown_stack_push: push an item to the top of the stack */
-void hoedown_stack_push(hoedown_stack *st, void *item);
+/* rfcdown_stack_push: push an item to the top of the stack */
+void rfcdown_stack_push(rfcdown_stack *st, void *item);
 
-/* hoedown_stack_pop: retrieve and remove the item at the top of the stack */
-void *hoedown_stack_pop(hoedown_stack *st);
+/* rfcdown_stack_pop: retrieve and remove the item at the top of the stack */
+void *rfcdown_stack_pop(rfcdown_stack *st);
 
-/* hoedown_stack_top: retrieve the item at the top of the stack */
-void *hoedown_stack_top(const hoedown_stack *st);
+/* rfcdown_stack_top: retrieve the item at the top of the stack */
+void *rfcdown_stack_top(const rfcdown_stack *st);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /** HOEDOWN_STACK_H **/
+#endif /** RFCDOWN_STACK_H **/

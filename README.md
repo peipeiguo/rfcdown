@@ -1,9 +1,9 @@
 RFCdown
 =======
 
-`RFCdown` is an experimental fork of [Hoedown](https://github.com/hoedown/hoedown), a revived fork of [Sundown](https://github.com/vmg/sundown) which was based on the original code of the [Upskirt library](http://fossil.instinctive.eu/libupskirt/index) by Natacha Porté. (Whew!)
+`RFCdown` is an experimental fork of [Hoedown](https://github.com/hoedown/hoedown), a revived fork of [Sundown](https://github.com/vmg/sundown), which was based on the original code of the [Upskirt library](http://fossil.instinctive.eu/libupskirt/index) by Natacha Porté.
 
-The primary purpose of `RFCdown` is to support using Markdown to author IETF RFCs, using plain old standard C99.
+The primary purpose of `RFCdown` is to support using Markdown to author IETF RFCs. Unlike many of the other efforts in this area, `RFCdown` uses plain old standard C99 rather than some random scripting language.
 
 
 Features

@@ -1,9 +1,9 @@
 #include "version.h"
 
 void
-hoedown_version(int *major, int *minor, int *revision)
+rfcdown_version(int *major, int *minor, int *revision)
 {
-	*major = HOEDOWN_VERSION_MAJOR;
-	*minor = HOEDOWN_VERSION_MINOR;
-	*revision = HOEDOWN_VERSION_REVISION;
+	*major = RFCDOWN_VERSION_MAJOR;
+	*minor = RFCDOWN_VERSION_MINOR;
+	*revision = RFCDOWN_VERSION_REVISION;
 }

@@ -549,7 +549,7 @@ find_emph_char(uint8_t *data, size_t size, uint8_t c)
 			}
 
 			/* not a well-formed codespan; use found matching emph char */
-			if (i >= size) return tmp_i;
+			if (bt < span_nb && i >= size) return tmp_i;
 		}
 		/* skipping a link */
 		else if (data[i] == '[') {
@@ -1008,7 +1008,11 @@ char_autolink_www(rfcdown_buffer *ob, rfcdown_document *doc, uint8_t *data, size
 		RFCDOWN_BUFPUTSL(link_url, "http://");
 		rfcdown_buffer_put(link_url, link->data, link->size);
 
-		ob->size -= rewind;
+		if (ob->size > rewind)
+			ob->size -= rewind;
+		else
+			ob->size = 0;
+
 		if (doc->md.normal_text) {
 			link_text = newbuf(doc, BUFFER_SPAN);
 			doc->md.normal_text(link_text, link, &doc->data);
@@ -1036,7 +1040,11 @@ char_autolink_email(rfcdown_buffer *ob, rfcdown_document *doc, uint8_t *data, si
 	link = newbuf(doc, BUFFER_SPAN);
 
 	if ((link_len = rfcdown_autolink__email(&rewind, link, data, offset, size, 0)) > 0) {
-		ob->size -= rewind;
+		if (ob->size > rewind)
+			ob->size -= rewind;
+		else
+			ob->size = 0;
+
 		doc->md.autolink(ob, link, RFCDOWN_AUTOLINK_EMAIL, &doc->data);
 	}
 
@@ -1056,7 +1064,11 @@ char_autolink_url(rfcdown_buffer *ob, rfcdown_document *doc, uint8_t *data, size
 	link = newbuf(doc, BUFFER_SPAN);
 
 	if ((link_len = rfcdown_autolink__url(&rewind, link, data, offset, size, 0)) > 0) {
-		ob->size -= rewind;
+		if (ob->size > rewind)
+			ob->size -= rewind;
+		else
+			ob->size = 0;
+
 		doc->md.autolink(ob, link, RFCDOWN_AUTOLINK_NORMAL, &doc->data);
 	}
 
@@ -1187,8 +1199,10 @@ char_link(rfcdown_buffer *ob, rfcdown_document *doc, uint8_t *data, size_t offse
 			link_e--;
 
 		/* remove optional angle brackets around the link */
-		if (data[link_b] == '<') link_b++;
-		if (data[link_e - 1] == '>') link_e--;
+		if (data[link_b] == '<' && data[link_e - 1] == '>') {
+			link_b++;
+			link_e--;
+		}
 
 		/* building escaped link and title */
 		if (link_e > link_b) {
@@ -2225,7 +2239,15 @@ parse_table_row(
 		cell_start = i;
 
 		len = find_emph_char(data + i, size - i, '|');
-		i += len ? len : size - i;
+
+		/* Two possibilities for len == 0:
+		   1) No more pipe char found in the current line.
+		   2) The next pipe is right after the current one, i.e. empty cell.
+		   For case 1, we skip to the end of line; for case 2 we just continue.
+		*/
+		if (len == 0 && i < size && data[i] != '|')
+			len = size - i;
+		i += len;
 
 		cell_end = i - 1;
 

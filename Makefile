@@ -1,8 +1,12 @@
-CFLAGS = -g -O3 -ansi -pedantic -Wall -Wextra -Wno-unused-parameter -Isrc
+CFLAGS = -g -O3 -ansi -pedantic -Wall -Wextra -Wno-unused-parameter
 PREFIX = /usr/local
+BINDIR = $(PREFIX)/bin
+LIBDIR = $(PREFIX)/lib
+INCLUDEDIR = $(PREFIX)/include
 
+HOEDOWN_CFLAGS = $(CFLAGS) -Isrc
 ifneq ($(OS),Windows_NT)
-	CFLAGS += -fPIC
+	HOEDOWN_CFLAGS += -fPIC
 endif
 
 RFCDOWN_SRC=\
@@ -18,7 +22,7 @@ RFCDOWN_SRC=\
 
 .PHONY:		all test test-pl clean
 
-all:		librfcdown.so rfcdown
+all:		librfcdown.so librfcdown.a rfcdown
 
 # Libraries
 librfcdown.so: librfcdown.so.1
@@ -26,6 +30,7 @@ librfcdown.so: librfcdown.so.1
 
 librfcdown.so.1: $(RFCDOWN_SRC)
 	$(CC) -shared $^ $(LDFLAGS) -o $@
+#	$(CC) -Wl,-soname,$(@F) -shared $^ $(LDFLAGS) -o $@
 
 librfcdown.a: $(RFCDOWN_SRC)
 	$(AR) rcs librfcdown.a $^
@@ -54,19 +59,23 @@ clean:
 
 # Installing
 install:
-	install -m755 -d $(DESTDIR)$(PREFIX)/lib
-	install -m755 -d $(DESTDIR)$(PREFIX)/bin
-	install -m755 -d $(DESTDIR)$(PREFIX)/include
+	install -m755 -d $(DESTDIR)$(LIBDIR)
+	install -m755 -d $(DESTDIR)$(BINDIR)
+	install -m755 -d $(DESTDIR)$(INCLUDEDIR)
 
-	install -m644 librfcdown.* $(DESTDIR)$(PREFIX)/lib
+	install -m644 librfcdown.a $(DESTDIR)$(LIBDIR)
+	install -m755 librfcdown.so.3 $(DESTDIR)$(LIBDIR)
+	ln -f -s librfcdown.so.3 $(DESTDIR)$(LIBDIR)/librfcdown.so
+
 	install -m755 rfcdown $(DESTDIR)$(PREFIX)/bin
 
 	install -m755 -d $(DESTDIR)$(PREFIX)/include/rfcdown
 	install -m644 src/*.h $(DESTDIR)$(PREFIX)/include/rfcdown
 
+
 # Generic object compilations
 %.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(HOEDOWN_CFLAGS) -c -o $@ $<
 
 src/html_blocks.o: src/html_blocks.c
-	$(CC) $(CFLAGS) -Wno-static-in-inline -c -o $@ $<
+	$(CC) $(HOEDOWN_CFLAGS) -Wno-static-in-inline -c -o $@ $<

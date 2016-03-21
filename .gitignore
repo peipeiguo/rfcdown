@@ -1,10 +1,4 @@
 *.o
-*.obj
-*.exe
-hoedown
-hoedown.dll
-hoedown.exp
-hoedown.lib
-smartypants
-libhoedown.so*
-libhoedown.a
+rfcdown
+librfcdown.so*
+librfcdown.a

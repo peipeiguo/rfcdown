@@ -64,8 +64,8 @@ install:
 	install -m755 -d $(DESTDIR)$(INCLUDEDIR)
 
 	install -m644 librfcdown.a $(DESTDIR)$(LIBDIR)
-	install -m755 librfcdown.so.3 $(DESTDIR)$(LIBDIR)
-	ln -f -s librfcdown.so.3 $(DESTDIR)$(LIBDIR)/librfcdown.so
+	install -m755 librfcdown.so.1 $(DESTDIR)$(LIBDIR)
+	ln -f -s librfcdown.so.1 $(DESTDIR)$(LIBDIR)/librfcdown.so
 
 	install -m755 rfcdown $(DESTDIR)$(PREFIX)/bin
 
